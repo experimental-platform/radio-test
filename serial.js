@@ -2,7 +2,7 @@ var async = require("async");
 var serialport = require("serialport");
 var SerialPort = serialport.SerialPort;
 
-var port = new SerialPort("/dev/tty.usbserial-DA01ID01", {
+var port = new SerialPort("/dev/ttyUSB0", {
   baudrate: 115200,
   databits: 8,
   stopbits: 1,
