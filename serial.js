@@ -1,8 +1,11 @@
-var async = require("async");
-var serialport = require("serialport");
-var SerialPort = serialport.SerialPort;
+var async = require("async"),
+  serialport = require("serialport"),
+  SerialPort = serialport.SerialPort,
+  os = require('os'),
+  device = os.type() === 'Darwin' ? "/dev/tty.usbserial-DA01ID01" : '/dev/ttyUSB0';
 
-var port = new SerialPort("/dev/ttyUSB0", {
+
+var port = new SerialPort(device, {
   baudrate: 115200,
   databits: 8,
   stopbits: 1,

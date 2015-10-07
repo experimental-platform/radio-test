@@ -7,7 +7,6 @@ var express = require('express'),
 
 app.use(express.static(path.join(__dirname, './static')));
 
-
 io.on('connection', function (socket) {
   console.log('User connected. Socket id %s', socket.id);
 
