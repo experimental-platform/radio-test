@@ -56,8 +56,8 @@
 <ul id="messages"></ul>
 <script>
     var socket = io('http://' + window.location.hostname, {path: window.location.pathname + 'socket.io'});
-    socket.on('data received', function (msg) {
-        $('#messages').append($('<li>').text(msg));
+    socket.on('data received', function (data) {
+        $('#messages').append($('<code>').text(data.bits.join('')));
     });
 </script>
 </body>

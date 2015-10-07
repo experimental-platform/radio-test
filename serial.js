@@ -30,11 +30,11 @@ function makeParser(cb) {
       return false;
     } else if (line === 'End of recordedBits\r') {
       cb(lineBuffer);
-      lineBuffer = [[], []];
+      lineBuffer = {timings: [], bits: []};
     } else {
       var arr = line.split(' ');
-      lineBuffer[0].push(arr[1]);
-      lineBuffer[1].push(arr[2]);
+      lineBuffer.bits.push(arr[1]);
+      lineBuffer.timings.push(arr[2]);
     }
   }
 }
