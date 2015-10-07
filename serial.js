@@ -22,21 +22,19 @@ function parsePacket(packet) {
 }
 
 function makeParser(cb) {
-  var lineBuffer = [];
+  var lineBuffer = [[], []];
   return function parseLine(line) {
     // TODO: track line numbers
+    console.log("LINE RECEIVED: " + line);
     if (line === 'Program started\r') {
-      console.log("Program started");
       return false;
     } else if (line === 'End of recordedBits\r') {
       cb(lineBuffer);
-      // console.log("Bits logged");
-      lineBuffer = [];
+      lineBuffer = [[], []];
     } else {
       var arr = line.split(' ');
-      var datum = {state: arr[1], time: arr[2]};
-      lineBuffer.push(datum);
-      // console.log("Bit received");
+      lineBuffer[0].push(arr[1]);
+      lineBuffer[1].push(arr[2]);
     }
   }
 }
