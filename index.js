@@ -8,18 +8,18 @@ var express = require('express'),
   analyse = require('./analyse').analyse;
 
 
-app.use(express.static(path.join(__dirname, './static')));
-
-
-io.on('connection', function (socket) {
-  console.log('User connected. Socket id %s', socket.id);
-  // TODO: SEND ALL KNOWN SIGNALS
-  socket.on('disconnect', function () {
-    console.log('User disconnected. %s. Socket id %s', socket.id);
-  });
-});
-
 data = storage.read(function (data) {
+  // static file server
+  app.use(express.static(path.join(__dirname, './static')));
+  // socket.io handlers
+  io.on('connection', function (socket) {
+    console.log('User connected. Socket id %s', socket.id);
+    io.emit('known signals', data);
+    socket.on('disconnect', function () {
+      console.log('User disconnected. %s. Socket id %s', socket.id);
+    });
+  });
+  // serial console handlers
   serial.start(function (signal) {
     if (signal) {
       signal = analyse(signal);
@@ -33,10 +33,8 @@ data = storage.read(function (data) {
       }
     }
   });
-});
-
-
-http.listen(process.env.PORT || 5000, function () {
-  console.log('listening on: ' + process.env.PORT || 5000);
+  http.listen(process.env.PORT || 5000, function () {
+    console.log('listening on: ' + process.env.PORT || 5000);
+  });
 });
 

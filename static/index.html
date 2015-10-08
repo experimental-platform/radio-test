@@ -45,7 +45,14 @@
     socket.on('new signal', function (signal) {
         $('#signal_list').prepend($('<li>').text(signal.name));
     });
-    // TODO: on new signal: add to list of available signals
+    socket.on('known signals', function (signals) {
+        $('#signal_list').empty();
+        for (signal_id in signals) {
+            if (signals.hasOwnProperty(signal_id)) {
+                $('#signal_list').prepend($('<li>').text(signals[signal_id].name));
+            }
+        }
+    });
     // TODO: add 'send' button
 </script>
 </body>
