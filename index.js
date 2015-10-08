@@ -9,8 +9,15 @@ var express = require('express'),
 
 
 data = storage.read(function (data) {
+  // express
   // static file server
   app.use(express.static(path.join(__dirname, './static')));
+  app.post('/send', function (req, res, next) {
+    console.log("Sendig Signal to " + req.query.id + "...");
+    // TODO: send the signal
+    res.json({success: true});
+    next();
+  });
   // socket.io handlers
   io.on('connection', function (socket) {
     console.log('User connected. Socket id %s', socket.id);

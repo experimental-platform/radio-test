@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.js"></script>
     <title>Experimental Hack</title>
 </head>
 <body>
@@ -35,25 +36,33 @@
         </div>
     </div>
 </div>
-
 <script>
-    var socket = io('http://' + window.location.hostname, {path: window.location.pathname + 'socket.io'});
-    // on known signal: display
-    socket.on('known signal', function (signal) {
-        $('#latest_signals').prepend($('<li>').text(signal.name));
-    });
-    socket.on('new signal', function (signal) {
-        $('#signal_list').prepend($('<li>').text(signal.name));
-    });
-    socket.on('known signals', function (signals) {
-        $('#signal_list').empty();
-        for (signal_id in signals) {
-            if (signals.hasOwnProperty(signal_id)) {
-                $('#signal_list').prepend($('<li>').text(signals[signal_id].name));
+    $(window).load(function () {
+        var socket = io('http://' + window.location.hostname, {path: window.location.pathname + 'socket.io'});
+        var button_template = '<li>{{name}} <button type="button" class="btn btn-success btn-xs send-button" name="{{identity}}" value="send">Send</button></li>';
+
+        // on known signal: display
+        socket.on('known signal', function (signal) {
+            $('#latest_signals').prepend($('<li>').text(signal.name));
+        });
+        socket.on('new signal', function (signal) {
+            $('#signal_list').prepend(Mustache.render(button_template, signal));
+        });
+        socket.on('known signals', function (signals) {
+            $('#signal_list').empty();
+            for (signal_id in signals) {
+                if (signals.hasOwnProperty(signal_id)) {
+                    $('#signal_list').prepend(Mustache.render(button_template, signals[signal_id]));
+                }
             }
-        }
+        });
+        $('#signal_list').on('click', '.send-button', function () {
+            console.log("Sending to device " + $(this).attr('name') + "...");
+            $.post( "/send?id=" + $(this).attr('name'), function( data ) {
+                console.log(data);
+            });
+        });
     });
-    // TODO: add 'send' button
 </script>
 </body>
 </html>
