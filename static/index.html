@@ -58,9 +58,7 @@
         });
         $('#signal_list').on('click', '.send-button', function () {
             console.log("Sending to device " + $(this).attr('name') + "...");
-            $.post( "/send?id=" + $(this).attr('name'), function( data ) {
-                console.log(data);
-            });
+            socket.emit('send signal', $(this).attr('name'));
         });
     });
 </script>

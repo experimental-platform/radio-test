@@ -12,16 +12,15 @@ data = storage.read(function (data) {
   // express
   // static file server
   app.use(express.static(path.join(__dirname, './static')));
-  app.post('/send', function (req, res, next) {
-    console.log("Sendig Signal to " + req.query.id + "...");
-    // TODO: send the signal
-    res.json({success: true});
-    next();
-  });
   // socket.io handlers
   io.on('connection', function (socket) {
     console.log('User connected. Socket id %s', socket.id);
     io.emit('known signals', data);
+    // when the client emits 'new message', this listens and executes
+    socket.on('send signal', function (signal_id) {
+      console.log("Sending Signal to " + signal_id + "...");
+      // TODO: Actually send a signal
+    });
     socket.on('disconnect', function () {
       console.log('User disconnected. %s. Socket id %s', socket.id);
     });
