@@ -1,5 +1,6 @@
 var fs = require('fs'),
   crc = require('crc-32'),
+  crypto = require('crypto'),
   _ = require('underscore'),
   error = "error";
 
@@ -80,8 +81,9 @@ exports.analyse = function (data) {
   data.bits = analyseBits(data.timings);
   data.errors = _.contains(data.bits, error);
   data.crc = crc.str(data.bits.join());
-  data.identity = data.crc;
   data.received = new Date();
-  data.name = "ID: " + data.crc.toString() + ', ' + data.bits.length + " Bits";
+  data.sha1 = crypto.createHash('sha1').update(data.bits.toString()).digest('hex');
+  data.identity = data.sha1;
+  data.name = "ID: " + data.sha1 + ' (' + data.bits.length + " Bits)";
   return data;
 };
