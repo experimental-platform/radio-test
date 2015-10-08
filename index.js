@@ -13,6 +13,7 @@ app.use(express.static(path.join(__dirname, './static')));
 
 io.on('connection', function (socket) {
   console.log('User connected. Socket id %s', socket.id);
+  // TODO: SEND ALL KNOWN SIGNALS
   socket.on('disconnect', function () {
     console.log('User disconnected. %s. Socket id %s', socket.id);
   });
