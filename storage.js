@@ -1,9 +1,10 @@
 var fs = require('fs'),
   jsonfile = require('jsonfile'),
-  util = require('util');
+  util = require('util'),
+  filename = '/tmp/radio.json';
 
 
-exports.read = function (filename, cb) {
+exports.read = function (cb) {
   fs.stat(filename, function (err, stats) {
     if (err) {
       console.log("No previous data detected, creating new base object.");
@@ -32,7 +33,6 @@ var writeFile = function (filename, data, cb) {
 
 exports.write = function (data, cb) {
   // TODO: change directory!
-  var filename = '/tmp/radio.json';
   fs.stat(filename, function (err, stats) {
     if (err) {
       console.log("No previous data detected, creating new file.");

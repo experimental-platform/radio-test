@@ -19,7 +19,7 @@ io.on('connection', function (socket) {
   });
 });
 
-data = storage.read("/data/storage.json", function (data) {
+data = storage.read(function (data) {
   serial.start(function (signal) {
     if (signal) {
       signal = analyse(signal);
