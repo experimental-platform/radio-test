@@ -24,7 +24,8 @@ data = storage.read(function (data) {
     if (signal) {
       signal = analyse(signal);
       if (data[signal.identity]) {
-        io.emit('known signal', signal);
+        io.emit('known signal', data[signal.identity]);
+        // TODO: compare signal quality and replace bad recordings
       } else {
         data[signal.identity] = signal;
         storage.write(data);

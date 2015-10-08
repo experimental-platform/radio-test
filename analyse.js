@@ -73,7 +73,7 @@ var analyseBits = function (data) {
   return values;
 };
 
-// TODO: Analyse signal quality
+// TODO: Analyse and store signal quality
 
 
 exports.analyse = function (data) {
