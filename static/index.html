@@ -1,64 +1,52 @@
 <!doctype html>
 <html>
 <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
     <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <title>Socket.IO chat</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font: 13px Helvetica, Arial;
-        }
-
-        form {
-            background: #000;
-            padding: 3px;
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-        }
-
-        form input {
-            border: 0;
-            padding: 10px;
-            width: 90%;
-            margin-right: .5%;
-        }
-
-        form button {
-            width: 9%;
-            background: rgb(130, 224, 255);
-            border: none;
-            padding: 10px;
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #messages li {
-            padding: 5px 10px;
-        }
-
-        #messages li:nth-child(odd) {
-            background: #eee;
-        }
-    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <title>Experimental Hack</title>
 </head>
 <body>
-<ul id="messages"></ul>
+<div class="container">
+    <div class="page-header">
+        <h1>Protonet Universal Remote</h1>
+
+        <p class="lead">Your control, simplified.</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <h3>Signals We Know</h3>
+            <hr>
+            <ul id="signal_list">
+            </ul>
+        </div>
+        <div class="col-md-4">
+            <h3>Recently Received Signals</h3>
+            <hr>
+            <ul id="latest_signals">
+            </ul>
+        </div>
+    </div>
+</div>
+
 <script>
     var socket = io('http://' + window.location.hostname, {path: window.location.pathname + 'socket.io'});
-    socket.on('data received', function (data) {
-        $('#messages').append($('<code>').text(data.bits.join('')));
+    // on known signal: display
+    socket.on('known signal', function (signal) {
+        $('#latest_signals').prepend($('<li>').text(signal.name));
     });
+    socket.on('new signal', function (signal) {
+        $('#signal_list').prepend($('<li>').text(signal.name));
+    });
+    // TODO: on new signal: add to list of available signals
+    // TODO: add 'send' button
 </script>
 </body>
 </html>
