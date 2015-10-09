@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/app.css">
   </head>
   <body ng-app="radioControl">
-    <div class="container">
+    <div class="container ng-cloak">
       <div class="prominent" ng-if="page == 'create_1'" ng-controller="CreateCommand1Ctrl">
         <p class="big-text blink" ng-click="nextPage()">Waiting for signal …</p>
         <p class="small-text">Simply press a button on your radio remote control.</p>
@@ -19,7 +19,7 @@
         </form>
       </div>
 
-      <div class="content ng-cloak" ng-controller="CommandsListCtrl" ng-if="!page">
+      <div class="content" ng-controller="CommandsListCtrl" ng-if="!page">
         <a class="record-link" speech-input callback="findAndExecute"><span>Say a command</span></a>
         <a class="btn" ng-repeat="command in commands" ng-click="findAndExecute(command.name)">{{command.name}}</a>
         <a class="btn add" ng-click="goToCreate()">+ Add a command</a>
@@ -28,6 +28,7 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/underscore.min.js"></script>
     <script src="js/angular.min.js"></script>
+    <script src="js/socket.io.min.js"></script>
     <script src="js/app.js"></script>
   </body>
 </html>

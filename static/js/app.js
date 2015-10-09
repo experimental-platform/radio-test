@@ -1,8 +1,36 @@
 var app = angular.module("radioControl", [])
-  .run(function() {
+  .run(function(socket) {
     console.log("App is running ...");
   })
-  
+
+  .factory("socket", function() {
+    var path = location.pathname.replace(/(.*)(\/.*)/, "$1")
+    var socket = io('http://' + location.hostname, {
+      path: path + "/socket.io"
+    });
+
+    socket.on("connect", function() {
+      console.log("Socket is connected");
+    });
+
+    socket.on('known signal', function (signal) {
+      console.log("Received known signal:", signal);
+    });
+
+    socket.on('new signal', function (signal) {
+      console.log("Received new signal:", signal);
+    });
+
+    socket.on('known signals', function (signals) {
+      console.log("Received list of known signals:", signals);
+    });
+
+    // sending a signal with a name
+    // socket.emit('send signal', $(this).attr('name'));
+
+    return socket;
+  })
+
   .directive("speechInput", function() {
     return {
       scope: {
