@@ -58,3 +58,12 @@ exports.start = function (onChange) {
     console.log('error: ' + error);
   });
 };
+
+exports.send = function(data) {
+  toSend = data.join(",")
+  toSend = toSend + "," + toSend
+  toSend = toSend + "," + toSend
+
+  port.write("P" + toSend + ",S")
+};
+
