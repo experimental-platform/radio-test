@@ -15,11 +15,11 @@ data = storage.read(function (data) {
   // socket.io handlers
   io.on('connection', function (socket) {
     console.log('User connected. Socket id %s', socket.id);
+    // send all known
     io.emit('known signals', data);
-    // when the client emits 'new message', this listens and executes
     socket.on('send signal', function (signal_id) {
-      console.log("Sending Signal to " + signal_id + "...");
-      // TODO: Actually send a signal
+      console.log("Sending Signal to ", signal_id);
+      serial.send(data[signal_id].timings);
     });
     socket.on('disconnect', function () {
       console.log('User disconnected. %s. Socket id %s', socket.id);

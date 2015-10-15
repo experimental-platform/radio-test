@@ -1,66 +1,34 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
-<head>
+  <head>
     <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
-    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css">
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/mustache.js/2.1.3/mustache.js"></script>
-    <title>Experimental Hack</title>
-</head>
-<body>
-<div class="container">
-    <div class="page-header">
-        <h1>Protonet Universal Remote</h1>
+    <meta name=viewport content="width=device-width, initial-scale=1">
+    <title>Remote Control</title>
+    <link rel="stylesheet" href="css/app.css">
+  </head>
+  <body ng-app="radioControl">
+    <div class="container ng-cloak">
+      <div class="prominent" ng-if="page == 'create_1'" ng-controller="CreateCommand1Ctrl">
+        <p class="big-text blink" ng-click="nextPage()">Waiting for signal …</p>
+        <p class="small-text">Simply press a button on your radio remote control.</p>
+      </div>
 
-        <p class="lead">Your control, simplified.</p>
+      <div class="prominent" ng-if="page == 'create_2'" ng-controller="CreateCommand2Ctrl">
+        <form ng-submit="create()">
+          <input class="big-input" ng-model="command" type="text" placeholder="Enter a name …" required autofocus>
+        </form>
+      </div>
+
+      <div class="content" ng-controller="CommandsListCtrl" ng-if="!page">
+        <a class="record-link" speech-input callback="findAndExecute"><span>Say a command</span></a>
+        <a class="btn" ng-repeat="(key, value) in commands | orderBy:'received'" ng-click="findAndExecute(value.name)">{{value.name}}</a>
+        <a class="btn add" ng-click="goToCreate()">+ Add a command</a>
+      </div>
     </div>
-
-    <div class="row">
-        <div class="col-md-8">
-            <h3>Signals We Know</h3>
-            <hr>
-            <ul id="signal_list">
-            </ul>
-        </div>
-        <div class="col-md-4">
-            <h3>Recently Received Signals</h3>
-            <hr>
-            <ul id="latest_signals">
-            </ul>
-        </div>
-    </div>
-</div>
-<script>
-    $(window).load(function () {
-        var socket = io('http://' + window.location.hostname, {path: window.location.pathname + 'socket.io'});
-        var button_template = '<li>{{name}} <button type="button" class="btn btn-success btn-xs send-button" name="{{identity}}" value="send">Send</button></li>';
-
-        // on known signal: display
-        socket.on('known signal', function (signal) {
-            $('#latest_signals').prepend($('<li>').text(signal.name));
-        });
-        socket.on('new signal', function (signal) {
-            $('#signal_list').prepend(Mustache.render(button_template, signal));
-        });
-        socket.on('known signals', function (signals) {
-            $('#signal_list').empty();
-            for (signal_id in signals) {
-                if (signals.hasOwnProperty(signal_id)) {
-                    $('#signal_list').prepend(Mustache.render(button_template, signals[signal_id]));
-                }
-            }
-        });
-        $('#signal_list').on('click', '.send-button', function () {
-            console.log("Sending to device " + $(this).attr('name') + "...");
-            socket.emit('send signal', $(this).attr('name'));
-        });
-    });
-</script>
-</body>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/underscore.min.js"></script>
+    <script src="js/angular.min.js"></script>
+    <script src="js/socket.io.min.js"></script>
+    <script src="js/app.js"></script>
+  </body>
 </html>

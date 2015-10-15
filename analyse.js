@@ -11,11 +11,11 @@ testVector = ["304", "1008", "292", "1008", "296", "1008", "948", "372", "272", 
 
 
 var timingToBit = function (timing) {
-  if (200 < timing && timing < 400) {
+  if (100 < timing && timing < 500) {
     return true
-  } else if (800 < timing && timing < 1200) {
+  } else if (600 < timing && timing < 1500) {
     return false
-  } else if (9000 < timing && timing < 11000) {
+  } else if (8000 < timing && timing < 13000) {
     return 'break';
   }
   console.log("UNKNOWN TIMING ERROR: " + timing.toString());
@@ -46,7 +46,7 @@ var majorize = function (ray) {
     return groupList.length;
   });
   if (ray.length > maximized.length && ray.length > 0) {
-    console.log("Error detected and corrected");
+    console.log("Error corrected: ", ray, " => ", maximized[0]);
     return maximized[0];
   }
   if (maximized.length === 0) {
@@ -58,9 +58,12 @@ var majorize = function (ray) {
 
 var analyseBits = function (data) {
   // parse timings into bits and break them into sequences
-  var values = _.map(data, parseFloat)
+  var values = _.chain(data)
+    .map(parseFloat)
+    //.tap(console.log)
     .map(timingToBit)
-    .reduce(breakup, [[]]);
+    .reduce(breakup, [[]])
+    .value();
   // filter out incomplete sequences
   var max_length = _.max(values, function (value) {
     return value.length
@@ -71,6 +74,7 @@ var analyseBits = function (data) {
   // democratic values to the core: error correction by majority
   values = _.zip.apply(null, values);
   values = _.map(values, majorize);
+  console.log("Bits: ", values.length);
   return values;
 };
 

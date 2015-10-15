@@ -25,18 +25,20 @@ function makeParser(cb) {
   var lineBuffer = {timings: [], bits: [], empty: true};
   return function parseLine(line) {
     // TODO: track line numbers
-    if (line === 'Program started\r') {
+    if (line.toLowerCase().indexOf('start') != -1) {
       return false;
-    } else if (line === 'End of recordedBits\r') {
-      if (! lineBuffer.empty) {
+    } else if (line.toLowerCase().indexOf('end') != -1) {
+      if (!lineBuffer.empty) {
         cb(lineBuffer);
       }
       lineBuffer = {timings: [], bits: [], empty: true};
     } else {
       var arr = line.split(' ');
-      lineBuffer.bits.push(arr[1].trim());
-      lineBuffer.timings.push(arr[2].trim());
-      lineBuffer.empty = false;
+      if (arr.length > 2) {
+        lineBuffer.bits.push(arr[1].trim());
+        lineBuffer.timings.push(arr[2].trim());
+        lineBuffer.empty = false;
+      }
     }
   }
 }
@@ -59,11 +61,12 @@ exports.start = function (onChange) {
   });
 };
 
-exports.send = function(data) {
-  toSend = data.join(",")
-  toSend = toSend + "," + toSend
-  toSend = toSend + "," + toSend
+exports.send = function (data) {
+  console.log("Sending data ", data);
+  var toSend = data.join(",");
+  //toSend = toSend + "," + toSend;
+  // toSend = toSend + "," + toSend;
 
-  port.write("P" + toSend + ",S")
+  port.write("P" + toSend + ",S");
 };
 
