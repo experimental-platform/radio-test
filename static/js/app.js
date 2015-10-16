@@ -18,7 +18,7 @@ var app = angular.module("radioControl", [])
     socket.on('known signal', function (signal) {
       $rootScope.$apply(function () {
         // TODO: trigger angular event to update command
-        console.log("Received known signal ", signal.name, " (", signal.identity, ")" );
+        console.log("Received known signal ", signal.name, " (", signal.identity, ")");
         return signal;
       });
     });
@@ -93,15 +93,17 @@ var app = angular.module("radioControl", [])
     };
 
     function onSignal(signal) {
-      console.log("Renaming the signal ", signal.identity, ", old name ", signal.name);
-      socket.currentSignal = signal.identity;
-      $rootScope.page = "create_2";
+      $scope.$apply(function () {
+        console.log("Renaming the signal ", signal.identity, ", old name ", signal.name);
+        socket.currentSignal = signal.identity;
+        $rootScope.page = "create_2";
+      });
     }
 
     socket.on("known signal", onSignal);
     // Do not forget to unregister socket handler
     $scope.$on("$destroy", function () {
-      socket.off("new signal", onSignal)
+      socket.off("known signal", onSignal)
     });
   })
 
@@ -142,7 +144,7 @@ var app = angular.module("radioControl", [])
       $rootScope.page = "create_1";
     };
 
-    $scope.send = function (whatever) {
-      socket.emit('send signal', whatever.identity);
+    $scope.send = function (signal) {
+      socket.emit('send signal', signal.identity);
     };
   });
