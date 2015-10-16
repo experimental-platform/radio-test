@@ -21,7 +21,7 @@
 
       <div class="content" ng-controller="CommandsListCtrl" ng-if="!page">
         <a class="record-link" speech-input callback="findAndExecute"><span>Say a command</span></a>
-        <a class="btn" ng-repeat="(key, value) in commands | orderBy:'received'" ng-click="findAndExecute(value.name)">{{value.name}}</a>
+        <a class="btn" ng-repeat="(key, value) in filterNamedItems() | orderBy:'received'" ng-click="findAndExecute(value.name)">{{value.name}}</a>
         <a class="btn add" ng-click="goToCreate()">+ Add a command</a>
       </div>
     </div>

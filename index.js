@@ -21,6 +21,12 @@ data = storage.read(function (data) {
       console.log("Sending Signal to ", signal_id);
       serial.send(data[signal_id].timings);
     });
+    socket.on('renamed signal', function (signal) {
+      var old_signal = data[signal.identity];
+      console.log("NEW NAME: ", signal.name, " OLD NAME: ", old_signal.name, " DONE.")
+      old_signal.name = signal.name;
+      storage.write(data);
+    });
     socket.on('disconnect', function () {
       console.log('User disconnected. %s. Socket id %s', socket.id);
     });

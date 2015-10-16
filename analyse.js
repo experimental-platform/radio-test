@@ -88,6 +88,6 @@ exports.analyse = function (data) {
   data.received = new Date();
   data.sha1 = crypto.createHash('sha1').update(data.bits.toString()).digest('hex');
   data.identity = data.sha1;
-  data.name = "ID: " + data.sha1 + ' (' + data.bits.length + " Bits)";
+  data.name = null;
   return data;
 };

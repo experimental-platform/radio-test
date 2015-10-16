@@ -12,26 +12,26 @@ var app = angular.module("radioControl", [])
     socket.commands = {};
 
     socket.on("connect", function () {
-      console.log("Socket is connected");
+      console.log("Socket is connected.");
     });
 
     socket.on('known signal', function (signal) {
       $rootScope.$apply(function () {
         // TODO: trigger angular event to update command
-        console.log("Received known signal:", signal);
+        console.log("Received known signal.");
       });
     });
 
     socket.on('new signal', function (signal) {
       $rootScope.$apply(function () {
-        console.log("Received new signal:", signal);
+        console.log("Received new signal.");
         socket.commands[signal.identity] = signal;
       });
     });
 
     socket.on('known signals', function (signals) {
       $rootScope.$apply(function () {
-        console.log("Received list of known signals:");
+        console.log("Received list of known signals.");
         _.extend(socket.commands, signals);
       });
     });
@@ -90,8 +90,9 @@ var app = angular.module("radioControl", [])
     };
 
     function onSignal(signal) {
-      console.log("Signal received: ", signal);
-      // TODO: do something
+      console.log("Rename the signal ", signal.identity, ", old name ", signal.name);
+      socket.currentSignal = signal.identity;
+      // TODO: Update text in create_1 so the user knows about the received signal.
     }
 
     socket.on("known signal", onSignal);
@@ -104,22 +105,27 @@ var app = angular.module("radioControl", [])
   .controller("CreateCommand2Ctrl", function ($scope, $rootScope, socket) {
     $scope.create = function () {
       var command = $scope.command.toLowerCase().replace(/[^a-z'\s0-9]/g, "");
-      console.log("create command for ", command);
-
-      console.log("Creating, ...", socket.commands);
+      console.log("create command for ", command;
       $rootScope.page = null;
-      // TODO: Set Name on signal
-
-      // TODO: Save this signal w/ new name in backend
-      socket.emit('renamed signal', socket.commands)
+      // Set Name on signal
+      var signal = socket.commands[socket.currentSignal];
+      signal.name = command;
+      // Save this signal w/ new name in backend
+      socket.emit('renamed signal', signal);
     };
   })
 
   .controller("CommandsListCtrl", function ($scope, $rootScope, socket) {
     $scope.commands = socket.commands;
+
+    $scope.filterNamedItems = function () {
+      return _.filter($scope.commands, function (item) {
+        return item.name;
+      })
+    };
+
     $scope.findAndExecute = function (name) {
       console.log("find and execute:", name);
-      // TODO: figure out the ID of the entry
       var command = _.findWhere($scope.commands, {
         // TODO: .toLowerCase() the name for speech input
         name: name
