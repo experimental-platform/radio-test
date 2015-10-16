@@ -3,7 +3,7 @@ var async = require("async"),
   SerialPort = serialport.SerialPort,
   os = require('os'),
 // TODO: Make device selection way more clever
-  device = os.type() === 'Darwin' ? "/dev/tty.usbserial-DA01ID0U" : '/dev/ttyUSB0';
+  device = os.type() === 'Darwin' ? "/dev/tty.usbserial-DA01ID01" : '/dev/ttyUSB0';
 
 
 var port = new SerialPort(device, {

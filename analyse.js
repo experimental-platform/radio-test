@@ -89,5 +89,6 @@ exports.analyse = function (data) {
   data.sha1 = crypto.createHash('sha1').update(data.bits.toString()).digest('hex');
   data.identity = data.sha1;
   data.name = null;
+  console.log("ANALYSIS: ", data.identity);
   return data;
 };

@@ -18,7 +18,7 @@ var app = angular.module("radioControl", [])
     socket.on('known signal', function (signal) {
       $rootScope.$apply(function () {
         // TODO: trigger angular event to update command
-        console.log("Received known signal ", signal.identity);
+        console.log("Received known signal ", signal.name, " (", signal.identity, ")" );
         return signal;
       });
     });
@@ -33,7 +33,7 @@ var app = angular.module("radioControl", [])
 
     socket.on('known signals', function (signals) {
       $rootScope.$apply(function () {
-        console.log("Received list with ", signals.length, " known signals");
+        console.log("Received list with ", Object.getOwnPropertyNames(signals).length, " known signals");
         _.extend(socket.commands, signals);
       });
     });
