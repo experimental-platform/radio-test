@@ -18,7 +18,7 @@ var timingToBit = function (timing) {
   } else if (8000 < timing && timing < 13000) {
     return 'break';
   }
-  console.log("UNKNOWN TIMING ERROR: " + timing.toString());
+  console.log("ANALYSIS: UNKNOWN TIMING ERROR: " + timing.toString());
   return error;
 };
 
@@ -46,11 +46,11 @@ var majorize = function (ray) {
     return groupList.length;
   });
   if (ray.length > maximized.length && ray.length > 0) {
-    console.log("Error corrected: ", ray, " => ", maximized[0]);
+    console.log("ANALYSIS: Error corrected: ", ray, " => ", maximized[0]);
     return maximized[0];
   }
   if (maximized.length === 0) {
-    console.log("Uncorrectable error detected: ", ray.toString());
+    console.log("ANALYSIS: Uncorrectable error detected: ", ray.toString());
     return error;
   }
   return maximized[0];
@@ -74,7 +74,7 @@ var analyseBits = function (data) {
   // democratic values to the core: error correction by majority
   values = _.zip.apply(null, values);
   values = _.map(values, majorize);
-  console.log("Bits: ", values.length);
+  console.log("ANALYSIS: ", values.length, " Bits");
   return values;
 };
 

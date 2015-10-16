@@ -18,12 +18,13 @@ data = storage.read(function (data) {
     // send all known
     io.emit('known signals', data);
     socket.on('send signal', function (signal_id) {
-      console.log("Sending Signal to ", signal_id);
-      serial.send(data[signal_id].timings);
+      signal = data[signal_id];
+      console.log("Sending Signal to ", signal.name, " (", signal_id, ")");
+      serial.send(signal.timings);
     });
     socket.on('renamed signal', function (signal) {
       var old_signal = data[signal.identity];
-      console.log("NEW NAME: ", signal.name, " OLD NAME: ", old_signal.name, " DONE.")
+      console.log("NEW NAME: '", signal.name, "' OLD NAME: '", old_signal.name, "'");
       old_signal.name = signal.name;
       storage.write(data);
     });

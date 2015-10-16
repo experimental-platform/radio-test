@@ -2,7 +2,8 @@ var async = require("async"),
   serialport = require("serialport"),
   SerialPort = serialport.SerialPort,
   os = require('os'),
-  device = os.type() === 'Darwin' ? "/dev/tty.usbserial-DA01ID01" : '/dev/ttyUSB0';
+// TODO: Make device selection way more clever
+  device = os.type() === 'Darwin' ? "/dev/tty.usbserial-DA01ID0U" : '/dev/ttyUSB0';
 
 
 var port = new SerialPort(device, {
@@ -11,14 +12,13 @@ var port = new SerialPort(device, {
   stopbits: 1,
   parity: 'none',
   parser: serialport.parsers.readline('\n'),
-  //parser: serialport.parsers.raw,
   platformOptions: {
     vmin: 0
   }
 });
 
 function parsePacket(packet) {
-  console.log(packet.length + ' pieces of data in the package')
+  console.log('SERIAL: ', packet.length, ' pieces of data in the package')
 }
 
 function makeParser(cb) {
@@ -47,9 +47,9 @@ function makeParser(cb) {
 exports.start = function (onChange) {
   port.on("open", function (error) {
     if (error) {
-      console.log('failed to open: ' + error);
+      console.log('SERIAL: Failed to open port: ' + error);
     } else {
-      console.log('Port opened');
+      console.log('SERIAL: Port opened');
 
       //port.on('data', function(line) { console.log(line); });
       port.on('data', makeParser(onChange));
@@ -57,16 +57,13 @@ exports.start = function (onChange) {
   });
 
   port.on('error', function (error) {
-    console.log('error: ' + error);
+    console.log('SERIAL ERROR: ' + error);
   });
 };
 
 exports.send = function (data) {
-  console.log("Sending data ", data);
+  console.log("SERIAL: Sending data ...");
   var toSend = data.join(",");
-  //toSend = toSend + "," + toSend;
-  // toSend = toSend + "," + toSend;
-
   port.write("P" + toSend + ",S");
 };
 
