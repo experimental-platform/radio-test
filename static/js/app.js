@@ -73,6 +73,7 @@ var app = angular.module("radioControl", [])
             }, 2000);
           };
           recognition.onerror = function (event) {
+            console.log("onerror", event)
             $element.removeClass("active result");
           };
           recognition.onend = function (event) {
@@ -86,12 +87,13 @@ var app = angular.module("radioControl", [])
 
   .controller("CreateCommand1Ctrl", function ($scope, $rootScope, socket) {
     $scope.nextPage = function () {
-      $rootScope.page = "create_2";
+      console.log('clicked!');
     };
 
     function onSignal(signal) {
       console.log("Rename the signal ", signal.identity, ", old name ", signal.name);
       socket.currentSignal = signal.identity;
+      $rootScope.page = "create_2";
       // TODO: Update text in create_1 so the user knows about the received signal.
     }
 
@@ -105,7 +107,7 @@ var app = angular.module("radioControl", [])
   .controller("CreateCommand2Ctrl", function ($scope, $rootScope, socket) {
     $scope.create = function () {
       var command = $scope.command.toLowerCase().replace(/[^a-z'\s0-9]/g, "");
-      console.log("create command for ", command;
+      console.log("create command for ", command);
       $rootScope.page = null;
       // Set Name on signal
       var signal = socket.commands[socket.currentSignal];
