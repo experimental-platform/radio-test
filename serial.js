@@ -48,6 +48,7 @@ exports.start = function (onChange) {
   port.on("open", function (error) {
     if (error) {
       console.log('SERIAL: Failed to open port: ' + error);
+      process.exit(23);
     } else {
       console.log('SERIAL: Port opened');
 
