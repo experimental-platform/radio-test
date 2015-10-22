@@ -35,18 +35,26 @@ exports.read = function (cb) {
 };
 
 
-exports.write = function (data, cb) {
+exports.write = function (data) {
   var filename = get_filename();
   fs.stat(filename, function (err, stats) {
     if (err) {
       console.log("No previous data detected, creating new file.");
-      fs.writeFile(filename, JSON.stringify(data), {}, cb);
+      fs.writeFile(filename, JSON.stringify(data), {}, function (err) {
+        if (err) {
+          console.log("Error writing file '" + filename + "':", err);
+        }
+      });
     } else if (stats.isFile()) {
       console.log("Previous file detected, atomically writing new data.");
-      var temp_filename = '/tmp/radio-tmp.json';
+      var temp_filename = filename + ".tmp";
       fs.writeFile(temp_filename, JSON.stringify(data), {}, function (err) {
         if (!err) {
-          fs.rename(temp_filename, filename, cb);
+          fs.rename(temp_filename, filename, function (err) {
+            if (err) {
+              console.log("Error writing file '" + filename + "':", err);
+            }
+          });
         } else {
           console.log('File write error!');
         }
