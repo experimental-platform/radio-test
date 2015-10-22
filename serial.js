@@ -1,12 +1,36 @@
 var async = require("async"),
   serialport = require("serialport"),
   SerialPort = serialport.SerialPort,
-  os = require('os'),
-// TODO: Make device selection way more clever
-  device = os.type() === 'Darwin' ? "/dev/tty.usbserial-DA01ID01" : '/dev/ttyUSB0';
+  fs = require('fs');
 
 
-var port = new SerialPort(device, {
+var search_for_interface = function () {
+  var possible_names = [
+    '/dev/tty.usbserial-DA01ID01',
+    '/dev/ttyUSB0',
+    '/dev/ttyUSB1',
+    '/dev/ttyUSB2',
+    '/dev/ttyUSB3',
+    '/dev/ttyUSB4',
+    '/dev/ttyUSB5',
+    '/dev/ttyUSB6',
+    '/dev/ttyUSB7',
+    '/dev/ttyUSB8',
+    '/dev/ttyUSB9',
+    '/dev/ttyUSB10'
+  ];
+  for (var i = 0; i < possible_names.length; i++) {
+    try {
+      fs.accessSync(possible_names[i]);
+      return possible_names[i];
+    } catch (err) {
+      console.log("Nope: " + possible_names[i])
+    }
+  }
+};
+
+
+var port = new SerialPort(search_for_interface(), {
   baudrate: 115200,
   databits: 8,
   stopbits: 1,
@@ -17,9 +41,6 @@ var port = new SerialPort(device, {
   }
 });
 
-function parsePacket(packet) {
-  console.log('SERIAL: ', packet.length, ' pieces of data in the package')
-}
 
 function makeParser(cb) {
   var lineBuffer = {timings: [], bits: [], empty: true};
@@ -61,6 +82,7 @@ exports.start = function (onChange) {
     console.log('SERIAL ERROR: ' + error);
   });
 };
+
 
 exports.send = function (data) {
   console.log("SERIAL: Sending data ...");
