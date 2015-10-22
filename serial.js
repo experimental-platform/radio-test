@@ -24,9 +24,10 @@ var search_for_interface = function () {
       fs.accessSync(possible_names[i]);
       return possible_names[i];
     } catch (err) {
-      console.log("Nope: " + possible_names[i])
+      console.log("Nope: " + possible_names[i]);
     }
   }
+  throw "No radio device found";
 };
 
 
