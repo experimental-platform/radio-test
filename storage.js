@@ -1,10 +1,20 @@
 var fs = require('fs'),
   jsonfile = require('jsonfile'),
-  util = require('util'),
-  filename = '/tmp/radio.json';
+  util = require('util');
+
+var get_filename = function () {
+  try {
+    fs.accessSync('/data/');
+    return '/data/radio.json';
+  }
+  catch (err) {
+    return '/tmp/radio.json';
+  }
+};
 
 
 exports.read = function (cb) {
+  var filename = get_filename();
   fs.stat(filename, function (err, stats) {
     if (err) {
       console.log("No previous data detected, creating new base object.");
@@ -24,15 +34,9 @@ exports.read = function (cb) {
   });
 };
 
-var writeFile = function (filename, data, cb) {
-  // var filename = Date.now().toString() + ".json";
-  // console.log("Filename: ", filename);
-
-};
-
 
 exports.write = function (data, cb) {
-  // TODO: change directory!
+  var filename = get_filename();
   fs.stat(filename, function (err, stats) {
     if (err) {
       console.log("No previous data detected, creating new file.");
