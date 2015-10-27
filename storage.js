@@ -1,6 +1,7 @@
 var fs = require('fs'),
   jsonfile = require('jsonfile'),
-  util = require('util');
+  util = require('util'),
+  _ = require('underscore');
 
 var get_filename = function () {
   try {

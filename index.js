@@ -36,9 +36,12 @@ data = storage.read(function (data) {
       serial.send(signal.timings);
     });
     socket.on('renamed signal', function (signal) {
-      var old_signal = data[signal.identity];
-      console.log("NEW NAME: '", signal.name, "' OLD NAME: '", old_signal.name, "'");
-      old_signal.name = signal.name;
+      console.log("NEW NAME: '", signal.name, "' for '", signal.identity, "'");
+      data[signal.identity] = signal;
+      // remove all entries without a name
+      data = _.omit(data, function (entry) {
+        return entry.name === null;
+      });
       storage.write(data);
     });
     socket.on('disconnect', function () {
@@ -52,30 +55,27 @@ data = storage.read(function (data) {
       if (data[signal.identity]) {
         io.emit('known signal', data[signal.identity]);
         // TODO: compare signal quality and replace bad recordings
+        var webhook = data[signal.identity]["webhook_receive"];
+        if (typeof webhook == "string") {
+          console.log("Calling webhook on receive: ", webhook);
+          request
+            .post(webhook, signal)
+            .on('error', function (err) {
+              console.log("Webhook ERROR: ", err)
+            })
+            .on('response', function (response) {
+              // TODO: Do something with the response?
+              console.log("Webhook status code: ", response.statusCode);
+            });
+        }
       } else {
-        data[signal.identity] = signal;
-        storage.write(data);
         io.emit('new signal', signal);
         io.emit('known signal', signal);
-      }
-      var webhook = data[signal.identity]["webhook_receive"];
-      if (typeof webhook == "string") {
-        console.log("Calling webhook on receive: ", webhook);
-        request
-          .post(webhook, signal)
-          .on('error', function (err) {
-            console.log("Webhook ERROR: ", err)
-          })
-          .on('response', function (response) {
-            // TODO: Do something with the response?
-            console.log("Webhook status code: ", response.statusCode);
-          });
       }
     }
   });
   http.listen(process.env.PORT || 5000, function () {
     console.log('listening on: ' + process.env.PORT || 5000);
   });
-})
-;
+});
 
