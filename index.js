@@ -4,6 +4,7 @@ var express = require('express'),
   http = require('http').Server(app),
   io = require('socket.io')(http),
   request = require('request').defaults({json: true}),
+  _ = require('underscore'),
   serial = require('./serial.js'),
   storage = require('./storage'),
   analyse = require('./analyse').analyse;
