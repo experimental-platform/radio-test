@@ -1,8 +1,7 @@
-var async = require("async"),
-  serialport = require("serialport"),
-  SerialPort = serialport.SerialPort,
-  fs = require('fs'),
-  port = null;
+var serialport = require("serialport"),
+    SerialPort = serialport.SerialPort,
+    fs = require('fs'),
+    port = null;
 
 
 var search_for_interface = function () {
@@ -29,7 +28,8 @@ var search_for_interface = function () {
       console.log("Nope: " + possible_names[i]);
     }
   }
-  throw "No radio device found";
+  console.log("No radio device found");
+  return null;
 };
 
 
@@ -52,13 +52,16 @@ function makeParser(cb) {
         lineBuffer.empty = false;
       }
     }
-  }
+  };
 }
 
 
 exports.start = function (onChange) {
   if (!port) {
     var port_file_name = search_for_interface();
+    if (!port_file_name) {
+      return;
+    }
     console.log("SERIAL: Opening " + port_file_name);
     port = new SerialPort(port_file_name, {
       baudrate: 115200,
@@ -78,8 +81,6 @@ exports.start = function (onChange) {
       process.exit(23);
     } else {
       console.log('SERIAL: Port opened (' + port.isOpen() + ')');
-
-      //port.on('data', function(line) { console.log(line); });
       port.on('data', makeParser(onChange));
     }
   });

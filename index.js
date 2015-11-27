@@ -12,7 +12,7 @@ var express = require('express'),
 storage.read(function(data) {
   function save() {
     // remove all entries without a name
-    data = _.omit(data, function (entry) {
+    data = _.omit(data, function(entry) {
       return entry.name === null;
     });
     storage.write(data);
@@ -20,14 +20,14 @@ storage.read(function(data) {
 
   app.use(express.static(path.join(__dirname, './static')));
   // socket.io handlers
-  io.on('connection', function (socket) {
+  io.on('connection', function(socket) {
     console.log('User connected. Socket id %s', socket.id);
     // send all known
     io.emit('known signals', data);
 
-    socket.on('send signal', function(signal_id) {
-      var signal = data[signal_id];
-      console.log("Sending Signal to ", signal.name, " (", signal_id, ")");
+    socket.on('send signal', function(identity) {
+      var signal = data[identity];
+      console.log("Sending Signal to ", signal.name, " (", identity, ")");
       serial.send(signal.timings);
     });
 
@@ -37,8 +37,8 @@ storage.read(function(data) {
       save();
     });
 
-    socket.on('delete signal', function(signal) {
-      delete data[signal.identity];
+    socket.on('delete signal', function(identity) {
+      delete data[identity];
       save();
     });
 

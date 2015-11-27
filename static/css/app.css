@@ -147,6 +147,23 @@ body {
   text-overflow: ellipsis;
   white-space: nowrap;
   transition: background-color 0.2s;
+  position: relative;
+}
+
+.sub-btn {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.sub-btn.delete {
+  background-image: url(../img/icon_trash.svg);
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-size: 22px 22px;
 }
 
 .btn.add {

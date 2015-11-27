@@ -1,9 +1,9 @@
 var app = angular.module("radioControl", [])
-  .run(function (socket) {
+  .run(function(socket) {
     console.log("App is running ...");
   })
 
-  .factory("socket", function ($rootScope) {
+  .factory("socket", function($rootScope) {
     var path = location.pathname.replace(/(.*)(\/.*)/, "$1");
     var socket = io('http://' + location.hostname, {
       path: path + "/socket.io"
@@ -11,28 +11,25 @@ var app = angular.module("radioControl", [])
 
     socket.commands = {};
 
-    socket.on("connect", function () {
+    socket.on("connect", function() {
       console.log("Socket is connected.");
     });
 
-    socket.on('known signal', function (signal) {
-      $rootScope.$apply(function () {
-        // TODO: trigger angular event to update command
+    socket.on('known signal', function(signal) {
+      $rootScope.$apply(function() {
         console.log("Received known signal ", signal.name, " (", signal.identity, ")");
-        return signal;
       });
     });
 
-    socket.on('new signal', function (signal) {
-      $rootScope.$apply(function () {
+    socket.on('new signal', function(signal) {
+      $rootScope.$apply(function() {
         console.log("Received new signal ", signal.identity);
         socket.commands[signal.identity] = signal;
-        return signal;
       });
     });
 
-    socket.on('known signals', function (signals) {
-      $rootScope.$apply(function () {
+    socket.on('known signals', function(signals) {
+      $rootScope.$apply(function() {
         console.log("Received list with ", Object.getOwnPropertyNames(signals).length, " known signals");
         _.extend(socket.commands, signals);
       });
@@ -40,17 +37,17 @@ var app = angular.module("radioControl", [])
     return socket;
   })
 
-  .directive("speechInput", function () {
+  .directive("speechInput", function() {
     return {
       scope: {
         callback: "="
       },
-      link: function ($scope, $element, attrs) {
+      link: function($scope, $element, attrs) {
         var timeout;
         var $span = $element.find("span");
         var originalText = $span.text();
 
-        $element.on("click", function () {
+        $element.on("click", function() {
           clearTimeout(timeout);
           $element.addClass("active");
           if (!window.webkitSpeechRecognition) {
@@ -59,26 +56,26 @@ var app = angular.module("radioControl", [])
           }
           var recognition = new webkitSpeechRecognition();
           recognition.lang = "en-US";
-          recognition.onresult = function (event) {
+          recognition.onresult = function(event) {
             $element.removeClass("active").addClass("result");
 
             try {
               var result = event.results[0][0].transcript;
-            } catch (e) {
-            }
+            } catch (e) {}
+
             $span.text(result);
             $scope.callback(result);
 
-            timeout = setTimeout(function () {
+            timeout = setTimeout(function() {
               $span.text(originalText);
               $element.removeClass("active result");
             }, 2000);
           };
-          recognition.onerror = function (event) {
+          recognition.onerror = function(event) {
             console.log("onerror", event);
             $element.removeClass("active result");
           };
-          recognition.onend = function (event) {
+          recognition.onend = function(event) {
             $element.removeClass("active");
           };
           recognition.start();
@@ -87,13 +84,9 @@ var app = angular.module("radioControl", [])
     }
   })
 
-  .controller("CreateCommand1Ctrl", function ($scope, $rootScope, socket) {
-    $scope.nextPage = function () {
-      console.log('clicked!');
-    };
-
+  .controller("CreateCommand1Ctrl", function($scope, $rootScope, socket) {
     function onSignal(signal) {
-      $scope.$apply(function () {
+      $scope.$apply(function() {
         console.log("Renaming the signal ", signal.identity, ", old name ", signal.name);
         socket.currentSignal = signal.identity;
         $rootScope.page = "create_2";
@@ -102,13 +95,13 @@ var app = angular.module("radioControl", [])
 
     socket.on("known signal", onSignal);
     // Do not forget to unregister socket handler
-    $scope.$on("$destroy", function () {
+    $scope.$on("$destroy", function() {
       socket.off("known signal", onSignal)
     });
   })
 
-  .controller("CreateCommand2Ctrl", function ($scope, $rootScope, socket) {
-    $scope.create = function () {
+  .controller("CreateCommand2Ctrl", function($scope, $rootScope, socket) {
+    $scope.create = function() {
       var command = $scope.command.toLowerCase().replace(/[^a-z'\s0-9]/g, "");
       var signal = socket.commands[socket.currentSignal];
       $rootScope.page = null;
@@ -120,31 +113,37 @@ var app = angular.module("radioControl", [])
     };
   })
 
-  .controller("CommandsListCtrl", function ($scope, $rootScope, socket) {
+  .controller("CommandsListCtrl", function($scope, $rootScope, socket) {
     $scope.commands = socket.commands;
+    $scope.editMode = false;
 
-    $scope.filterNamedItems = function () {
-      return _.filter($scope.commands, function (item) {
+    $scope.filterNamedItems = function() {
+      return _.filter($scope.commands, function(item) {
         return item.name;
-      })
+      });
     };
 
-    $scope.findAndExecute = function (name) {
+    $scope.findAndExecute = function(name) {
+      console.log("Find and execute command:", name);
       var command = _.findWhere($scope.commands, {
-        // TODO: .toLowerCase() the name for speech input
-        name: name
+        name: name.toLowerCase()
       });
-      console.log("Find and execute command '", name, "' (", command.identity, ")");
       if (command) {
+        console.log("Send:", name);
         $scope.send(command);
       }
     };
 
-    $scope.goToCreate = function () {
+    $scope.goToCreate = function() {
       $rootScope.page = "create_1";
     };
 
-    $scope.send = function (signal) {
+    $scope.delete = function(signal) {
+      socket.emit('delete signal', signal.identity);
+      delete socket.commands[signal.identity];
+    };
+
+    $scope.send = function(signal) {
       socket.emit('send signal', signal.identity);
     };
   });
