@@ -117,10 +117,6 @@ body {
   text-transform: uppercase;
 }
 
-.record-link:hover {
-  background-color: #E46F28;
-}
-
 .record-link:active {
   box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -155,14 +151,6 @@ body {
 
 .btn.add {
   background-color: #444;
-}
-
-.btn.add:hover {
-  background-color: #000;
-}
-
-.btn:hover {
-  background-color: #4e93e0;
 }
 
 .btn:active {
