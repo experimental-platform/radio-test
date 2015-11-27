@@ -5,7 +5,7 @@ var app = angular.module("radioControl", [])
 
   .factory("socket", function($rootScope) {
     var path = location.pathname.replace(/(.*)(\/.*)/, "$1");
-    var socket = io('http://' + location.hostname, {
+    var socket = io(location.protocol + '//' + location.hostname, {
       path: path + "/socket.io"
     });
 
