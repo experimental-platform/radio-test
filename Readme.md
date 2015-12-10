@@ -58,19 +58,26 @@ Our app for the radio module is like all other available apps hosted on our gith
 
 Go to your command line and type the following:
 
-_git clone https://github.com/experimental-platform/radio-test_. For all the non-gitters among us - this is the instruction to make an exact copy of the git repository named "radio-test".
+```
+git clone https://github.com/experimental-platform/radio-test
+```
+ For all the non-gitters among us - this is the instruction to make an exact copy of the git repository named "radio-test".
 
 Next change to the directory "radio-test".
 
 Now add the remote platform (your Experimental Platform) to the repository by typing:
 
-_git remote add platform ssh://dokku@yourIP:8022/radio-test_
+```
+git remote add platform ssh://dokku@yourIP:8022/radio-test
+```
 
 This command might need a bit of explaining. The term "platform" is decided by you. You can name it like you want, but you have to use the name later for pushing the repository to your Experimental Platform. "yourIP" of cause is the IP of your Experimental Platform, substitute it with the raw IP or something like "myMachine.local" (Remember you initially named your platform). Last "radio-test" is the path where the app looks for data, so do not change that.
 
 You are almost there - you just have to push the repository to your Experimental Platform with
 
-_git push platform master_
+```
+git push platform master
+```
 
 ![image](https://41.media.tumblr.com/54050f661686a8ba67c559a365d8e073/tumblr_inline_nwvwvtRYZC1tzfota_540.png)
 
